@@ -73,21 +73,35 @@ func stepFromDomainModel(s domain.Step) Step {
 	}
 }
 
+type RecipeStore interface {
+	Get(id string) (*Recipe, error)
+	Create(ctx context.Context, e Recipe) (ID error)
+}
 type RecipeAdapter struct {
+	store RecipeStore
 }
 
-func NewRecipeAdapter() (RecipeAdapter, error) {
-
-	return RecipeAdapter{}, nil
+func NewRecipeAdapter(store RecipeStore) (RecipeAdapter, error) {
+	return RecipeAdapter{store: store}, nil
 }
 
-func (r RecipeAdapter) Create(_ context.Context, recipe domain.Recipe) error {
-
-	return nil
+func (r RecipeAdapter) Create(ctx context.Context, recipe domain.Recipe) error {
+	recipeForDb := &Recipe{
+		ID:          recipe.ID.String(),
+		Description: recipe.Description,
+		UserID:      recipe.UserID.String(),
+		BeanID:      recipe.BeanID.String(),
+		Steps:       StepsFromDomainModel(recipe.Steps),
+		DateCreated: recipe.DateCreated,
+		DateUpdated: recipe.DateUpdated,
+	}
+	return r.store.Create(ctx, *recipeForDb)
 }
 
 func (r RecipeAdapter) Get(id uuid.UUID) (*domain.Recipe, error) {
-	var recipe Recipe
-
+	recipe, err := r.store.Get(id.String())
+	if err != nil {
+		return nil, err
+	}
 	return recipe.ToRecipe(), nil
 }

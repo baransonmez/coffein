@@ -8,10 +8,10 @@ import (
 )
 
 type NewRecipe struct {
-	UserID      string
-	BeanID      string
-	Description string
-	Steps       []domain.Step
+	UserID      string        `json:"user_id"`
+	BeanID      string        `json:"bean_id"`
+	Description string        `json:"description"`
+	Steps       []domain.Step `json:"steps"`
 }
 
 func (r *NewRecipe) toDomainModel() domain.Recipe {

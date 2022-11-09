@@ -11,42 +11,34 @@ type Handlers struct {
 	RecipeService *usecases.Service
 }
 
-func (h Handlers) Create(w http.ResponseWriter, r *http.Request) {
+func (h Handlers) Create(w http.ResponseWriter, r *http.Request) error {
 	var nr usecases.NewRecipe
 	if err := web.Decode(r, &nr); err != nil {
-		msg := fmt.Errorf("unable to decode payload: %w", err)
-		web.Respond(w, web.ErrorResponse{Error: msg.Error()}, http.StatusBadRequest)
-		return
+		return fmt.Errorf("unable to decode payload: %w", err)
 	}
 
 	ctx := r.Context()
 
 	prod, err := h.RecipeService.CreateNewRecipe(ctx, nr)
 	if err != nil {
-		msg := fmt.Errorf("creating new coffee bean, nr[%+v]: %w", nr, err)
-		web.Respond(w, web.ErrorResponse{Error: msg.Error()}, http.StatusBadRequest)
-		return
+		return fmt.Errorf("creating new coffee bean, nr[%+v]: %w", nr, err)
 	}
 
-	web.Respond(w, prod, http.StatusCreated)
+	return web.Respond(w, prod, http.StatusCreated)
 }
 
-func (h Handlers) Get(w http.ResponseWriter, r *http.Request) {
+func (h Handlers) Get(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
 	recipeUUID, err := web.ReadIDParam(r)
 	if err != nil {
-		msg := fmt.Errorf("unable to decode id")
-		web.Respond(w, web.ErrorResponse{Error: msg.Error()}, http.StatusBadRequest)
-		return
+		return fmt.Errorf("unable to decode id")
 	}
 
 	prod, err := h.RecipeService.GetRecipe(ctx, recipeUUID)
 	if err != nil {
-		msg := fmt.Errorf("getting recipe, recipeUUID[%+v]: %w", recipeUUID, err)
-		web.Respond(w, web.ErrorResponse{Error: msg.Error()}, http.StatusBadRequest)
-		return
+		return fmt.Errorf("getting recipe, recipeUUID[%+v]: %w", recipeUUID, err)
 	}
 
-	web.Respond(w, prod, http.StatusCreated)
+	return web.Respond(w, prod, http.StatusCreated)
 }

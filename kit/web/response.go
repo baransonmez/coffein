@@ -6,14 +6,14 @@ import (
 )
 
 // Respond converts a Go value to JSON and sends it to the client.
-func Respond(w http.ResponseWriter, data any, statusCode int) {
+func Respond(w http.ResponseWriter, data any, statusCode int) error {
 	if statusCode == http.StatusNoContent {
 		w.WriteHeader(statusCode)
 	}
 
 	jsonData, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
-		println(err)
+		return err
 	}
 
 	jsonData = append(jsonData, '\n')
@@ -23,10 +23,11 @@ func Respond(w http.ResponseWriter, data any, statusCode int) {
 	w.WriteHeader(statusCode)
 
 	if _, err := w.Write(jsonData); err != nil {
-		println(err)
+		return err
 	}
+	return nil
 }
 
-type ErrorResponse struct {
+type errorResponse struct {
 	Error string `json:"error"`
 }

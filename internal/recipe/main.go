@@ -8,6 +8,7 @@ import (
 	"github.com/baransonmez/coffein/internal/recipe/infra/incoming/web"
 	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing"
 	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/persistence"
+	kitweb "github.com/baransonmez/coffein/kit/web"
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"log"
@@ -68,7 +69,7 @@ func prettyPrint(i interface{}) string {
 
 func routes(recipeAPI web.Handlers) *httprouter.Router {
 	router := httprouter.New()
-	router.HandlerFunc(http.MethodPost, "/v1/recipe", recipeAPI.Create)
-	router.HandlerFunc(http.MethodGet, "/v1/recipe/:id", recipeAPI.Get)
+	router.HandlerFunc(http.MethodPost, "/v1/recipe", kitweb.Handle(recipeAPI.Create))
+	router.HandlerFunc(http.MethodGet, "/v1/recipe/:id", kitweb.Handle(recipeAPI.Get))
 	return router
 }

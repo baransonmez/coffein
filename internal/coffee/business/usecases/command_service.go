@@ -10,7 +10,7 @@ type CommandService struct {
 	repository Repository
 }
 
-func NewService(r Repository) *CommandService {
+func NewCommandService(r Repository) *CommandService {
 	return &CommandService{
 		repository: r,
 	}

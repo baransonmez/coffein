@@ -3,23 +3,22 @@ package usecases
 import (
 	"context"
 	"fmt"
-	"github.com/baransonmez/coffein/internal/recipe/business/domain"
 	"github.com/google/uuid"
 )
 
-type Service struct {
+type CommandService struct {
 	recipeRepository RecipeRepository
 	userRepository   UserRepository
 }
 
-func NewService(r RecipeRepository, u UserRepository) *Service {
-	return &Service{
+func NewCommandService(r RecipeRepository, u UserRepository) *CommandService {
+	return &CommandService{
 		recipeRepository: r,
 		userRepository:   u,
 	}
 }
 
-func (c Service) CreateNewRecipe(ctx context.Context, np NewRecipe) (uuid.UUID, error) {
+func (c CommandService) CreateNewRecipe(ctx context.Context, np NewRecipe) (uuid.UUID, error) {
 	err := np.Validate()
 	if err != nil {
 		return uuid.UUID{}, fmt.Errorf("create: %w", err)
@@ -37,13 +36,4 @@ func (c Service) CreateNewRecipe(ctx context.Context, np NewRecipe) (uuid.UUID, 
 	}
 
 	return recipe.ID, nil
-}
-
-func (c Service) GetRecipe(_ context.Context, id uuid.UUID) (*domain.Recipe, error) {
-	recipe, err := c.recipeRepository.Get(id)
-	if err != nil {
-		return nil, fmt.Errorf("get: %w", err)
-	}
-
-	return recipe, nil
 }

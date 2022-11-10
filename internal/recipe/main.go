@@ -21,8 +21,9 @@ func main() {
 	mem := persistence.NewInMem()
 	recipeAdapter, _ := recipe.NewRecipeAdapter(mem)
 	userAdapter, _ := user.NewUserAdapter()
-	service := usecases.NewService(recipeAdapter, userAdapter)
-	recipeID, err := service.CreateNewRecipe(nil, usecases.NewRecipe{
+	commandService := usecases.NewCommandService(recipeAdapter, userAdapter)
+	queryService := usecases.NewQueryService(recipeAdapter)
+	recipeID, err := commandService.CreateNewRecipe(nil, usecases.NewRecipe{
 		UserID:      uuid.New().String(),
 		BeanID:      uuid.New().String(),
 		Description: "30 seconds blooming",
@@ -47,7 +48,7 @@ func main() {
 		print(err)
 	}
 	fmt.Println(prettyPrint(recipeFromDb))
-	recipeAPI := web.Handlers{RecipeService: service}
+	recipeAPI := web.Handlers{CommandService: commandService, QueryService: queryService}
 	handler := routes(recipeAPI)
 
 	servPort := ":8089"

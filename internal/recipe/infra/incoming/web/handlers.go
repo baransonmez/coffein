@@ -8,7 +8,8 @@ import (
 )
 
 type Handlers struct {
-	RecipeService *usecases.Service
+	CommandService *usecases.CommandService
+	QueryService   *usecases.QueryService
 }
 
 func (h Handlers) Create(w http.ResponseWriter, r *http.Request) error {
@@ -19,7 +20,7 @@ func (h Handlers) Create(w http.ResponseWriter, r *http.Request) error {
 
 	ctx := r.Context()
 
-	prod, err := h.RecipeService.CreateNewRecipe(ctx, nr)
+	prod, err := h.CommandService.CreateNewRecipe(ctx, nr)
 	if err != nil {
 		return fmt.Errorf("creating new coffee bean, nr[%+v]: %w", nr, err)
 	}
@@ -35,7 +36,7 @@ func (h Handlers) Get(w http.ResponseWriter, r *http.Request) error {
 		return fmt.Errorf("unable to decode id")
 	}
 
-	prod, err := h.RecipeService.GetRecipe(ctx, recipeUUID)
+	prod, err := h.QueryService.GetRecipe(ctx, recipeUUID)
 	if err != nil {
 		return fmt.Errorf("getting recipe, recipeUUID[%+v]: %w", recipeUUID, err)
 	}

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/baransonmez/coffein/internal/coffee/business/usecases"
 	"github.com/baransonmez/coffein/internal/coffee/infra/incoming/web"
-	"github.com/baransonmez/coffein/internal/coffee/infra/outgoing/persistence"
+	"github.com/baransonmez/coffein/internal/coffee/infra/outgoing"
 	kitweb "github.com/baransonmez/coffein/kit/web"
 	"github.com/julienschmidt/httprouter"
 	"log"
@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	store, _ := persistence.NewStore()
+	store, _ := outgoing.NewStore()
 	commandService := usecases.NewCommandService(store)
 	queryService := usecases.NewQueryService(store)
 	beanId, err := commandService.CreateCoffeeBean(nil, usecases.NewCoffeeBean{

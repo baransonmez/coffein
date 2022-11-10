@@ -1,14 +1,10 @@
-package persistence
+package outgoing
 
 import (
-	"context"
 	"github.com/baransonmez/coffein/internal/coffee/business/domain"
 	"github.com/google/uuid"
 	"time"
 )
-
-type store struct {
-}
 
 type Bean struct {
 	ID          string    `db:"id"`
@@ -34,20 +30,4 @@ func (dbPrd *Bean) ToBean() *domain.Bean {
 		DateUpdated: dbPrd.DateUpdated,
 	}
 	return &pu
-}
-
-func NewStore() (store, error) {
-
-	return store{}, nil
-}
-
-func (s store) Create(_ context.Context, bean domain.Bean) error {
-
-	return nil
-}
-
-func (s store) Get(id uuid.UUID) (*domain.Bean, error) {
-	var bean Bean
-
-	return bean.ToBean(), nil
 }

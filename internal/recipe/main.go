@@ -6,8 +6,9 @@ import (
 	"github.com/baransonmez/coffein/internal/recipe/business/domain"
 	"github.com/baransonmez/coffein/internal/recipe/business/usecases"
 	"github.com/baransonmez/coffein/internal/recipe/infra/incoming/web"
-	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing"
-	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/persistence"
+	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/recipe"
+	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/recipe/persistence"
+	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/user"
 	kitweb "github.com/baransonmez/coffein/kit/web"
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
@@ -18,8 +19,8 @@ import (
 
 func main() {
 	mem := persistence.NewInMem()
-	recipeAdapter, _ := outgoing.NewRecipeAdapter(mem)
-	userAdapter, _ := outgoing.NewUserAdapter()
+	recipeAdapter, _ := recipe.NewRecipeAdapter(mem)
+	userAdapter, _ := user.NewUserAdapter()
 	service := usecases.NewService(recipeAdapter, userAdapter)
 	recipeID, err := service.CreateNewRecipe(nil, usecases.NewRecipe{
 		UserID:      uuid.New().String(),

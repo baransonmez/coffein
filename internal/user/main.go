@@ -7,8 +7,9 @@ import (
 
 func main() {
 	store, _ := persistence.NewStore()
-	service := usecases.NewService(store)
-	user, err := service.CreateNewUser(nil, usecases.NewUser{Name: "Baran"})
+	commandService := usecases.NewCommandService(store)
+	_ = usecases.NewQueryService(store)
+	user, err := commandService.CreateNewUser(nil, usecases.NewUser{Name: "Baran"})
 	if err != nil {
 		print(err)
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/baransonmez/coffein/internal/user/business/usecases"
 	"github.com/baransonmez/coffein/internal/user/infra/incoming/web"
+	"github.com/baransonmez/coffein/internal/user/infra/outgoing"
 	"github.com/baransonmez/coffein/internal/user/infra/outgoing/persistence"
 	kitweb "github.com/baransonmez/coffein/kit/web"
 	"github.com/julienschmidt/httprouter"
@@ -12,9 +13,10 @@ import (
 )
 
 func main() {
-	store, _ := persistence.NewStore()
-	commandService := usecases.NewCommandService(store)
-	queryService := usecases.NewQueryService(store)
+	inmem := persistence.NewInMem()
+	adapter := outgoing.NewUserAdapter(inmem)
+	commandService := usecases.NewCommandService(adapter)
+	queryService := usecases.NewQueryService(adapter)
 	user, err := commandService.CreateNewUser(nil, usecases.NewUser{Name: "Baran"})
 	if err != nil {
 		print(err)

@@ -88,7 +88,7 @@ func TestNewRecipe_toDomainModel(t *testing.T) {
 		}, want: domain.Recipe{
 			UserID:      userId,
 			BeanID:      beanId,
-			Description: "descriptioln",
+			Description: "description",
 			Steps:       []domain.Step{{Order: 1, Description: "step desc", DurationInSeconds: 3}},
 		}},
 	}

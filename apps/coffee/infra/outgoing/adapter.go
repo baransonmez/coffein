@@ -6,21 +6,37 @@ import (
 	"github.com/google/uuid"
 )
 
-type Store struct {
+type Store interface {
+	Get(id string) (*Bean, error)
+	Create(ctx context.Context, e *Bean) (ID error)
+}
+type Adapter struct {
+	store Store
 }
 
-func NewStore() (Store, error) {
-
-	return Store{}, nil
+func NewBeanAdapter(store Store) (Adapter, error) {
+	return Adapter{store: store}, nil
 }
 
-func (s Store) Create(_ context.Context, bean domain.Bean) error {
+func (s Adapter) Create(ctx context.Context, bean domain.Bean) error {
+	beanForDB := &Bean{
+		ID:          bean.ID.String(),
+		Name:        bean.Name,
+		Roaster:     bean.Roaster,
+		Origin:      bean.Origin,
+		Price:       bean.Price,
+		RoastDate:   bean.RoastDate,
+		DateCreated: bean.DateCreated,
+		DateUpdated: bean.DateUpdated,
+	}
 
-	return nil
+	return s.store.Create(ctx, beanForDB)
 }
 
-func (s Store) Get(id uuid.UUID) (*domain.Bean, error) {
-	var bean Bean
-
+func (s Adapter) Get(id uuid.UUID) (*domain.Bean, error) {
+	bean, err := s.store.Get(id.String())
+	if err != nil {
+		return nil, err
+	}
 	return bean.ToBean(), nil
 }

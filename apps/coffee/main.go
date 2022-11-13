@@ -4,6 +4,7 @@ import (
 	"github.com/baransonmez/coffein/internal/coffee/business/usecases"
 	"github.com/baransonmez/coffein/internal/coffee/infra/incoming/web"
 	"github.com/baransonmez/coffein/internal/coffee/infra/outgoing"
+	"github.com/baransonmez/coffein/internal/coffee/infra/outgoing/persistence"
 	kitweb "github.com/baransonmez/coffein/kit/web"
 	"github.com/julienschmidt/httprouter"
 	"log"
@@ -12,9 +13,10 @@ import (
 )
 
 func main() {
-	store, _ := outgoing.NewStore()
-	commandService := usecases.NewCommandService(store)
-	queryService := usecases.NewQueryService(store)
+	inmemStore := persistence.NewInMem()
+	outgoingAdapter, _ := outgoing.NewBeanAdapter(inmemStore)
+	commandService := usecases.NewCommandService(outgoingAdapter)
+	queryService := usecases.NewQueryService(outgoingAdapter)
 	beanId, err := commandService.CreateCoffeeBean(nil, usecases.NewCoffeeBean{
 		Name:      "Yirgaciffe",
 		Roaster:   "Montag",

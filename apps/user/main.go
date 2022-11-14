@@ -17,11 +17,6 @@ func main() {
 	adapter := outgoing.NewUserAdapter(inmem)
 	commandService := usecases.NewCommandService(adapter)
 	queryService := usecases.NewQueryService(adapter)
-	user, err := commandService.CreateNewUser(nil, usecases.NewUser{Name: "Baran"})
-	if err != nil {
-		print(err)
-	}
-	print(user.String())
 
 	userAPI := web.Handlers{CommandService: commandService, QueryService: queryService}
 	handler := routes(userAPI)
@@ -35,8 +30,8 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 45 * time.Second,
 	}
-	err = srv.ListenAndServe()
-
+	err := srv.ListenAndServe()
+	log.Fatal(err)
 }
 
 func routes(userAPI web.Handlers) *httprouter.Router {

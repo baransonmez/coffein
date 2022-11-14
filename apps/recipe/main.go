@@ -1,16 +1,12 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/baransonmez/coffein/internal/recipe/business/domain"
 	"github.com/baransonmez/coffein/internal/recipe/business/usecases"
 	"github.com/baransonmez/coffein/internal/recipe/infra/incoming/web"
 	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/recipe"
 	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/recipe/persistence"
 	"github.com/baransonmez/coffein/internal/recipe/infra/outgoing/user"
 	kitweb "github.com/baransonmez/coffein/kit/web"
-	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
@@ -23,31 +19,7 @@ func main() {
 	userAdapter, _ := user.NewUserAdapter()
 	commandService := usecases.NewCommandService(recipeAdapter, userAdapter)
 	queryService := usecases.NewQueryService(recipeAdapter)
-	recipeID, err := commandService.CreateNewRecipe(nil, usecases.NewRecipe{
-		UserID:      uuid.New().String(),
-		BeanID:      uuid.New().String(),
-		Description: "30 seconds blooming",
-		Steps: []domain.Step{
-			{
-				Description:       "blooming",
-				DurationInSeconds: 24,
-			},
-			{
-				Description:       "brewing",
-				DurationInSeconds: 76,
-			}},
-	})
-	if err != nil {
-		print(err)
-	}
 
-	print(recipeID.String())
-
-	recipeFromDb, err := mem.Get(recipeID.String())
-	if err != nil {
-		print(err)
-	}
-	fmt.Println(prettyPrint(recipeFromDb))
 	recipeAPI := web.Handlers{CommandService: commandService, QueryService: queryService}
 	handler := routes(recipeAPI)
 
@@ -60,13 +32,8 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 45 * time.Second,
 	}
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	log.Fatal(err)
-}
-
-func prettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "\t")
-	return string(s)
 }
 
 func routes(recipeAPI web.Handlers) *httprouter.Router {

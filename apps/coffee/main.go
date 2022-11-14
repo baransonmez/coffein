@@ -17,18 +17,6 @@ func main() {
 	outgoingAdapter, _ := outgoing.NewBeanAdapter(inmemStore)
 	commandService := usecases.NewCommandService(outgoingAdapter)
 	queryService := usecases.NewQueryService(outgoingAdapter)
-	beanId, err := commandService.CreateCoffeeBean(nil, usecases.NewCoffeeBean{
-		Name:      "Yirgaciffe",
-		Roaster:   "Montag",
-		Origin:    "Etiopia",
-		Price:     23,
-		RoastDate: time.Now().AddDate(2, 3, 4),
-	})
-
-	if err != nil {
-		print(err)
-	}
-	print(beanId.String())
 
 	recipeAPI := web.Handlers{CommandService: commandService, QueryService: queryService}
 	handler := routes(recipeAPI)
@@ -42,14 +30,14 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 45 * time.Second,
 	}
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	log.Fatal(err)
 
 }
 
-func routes(recipeAPI web.Handlers) *httprouter.Router {
+func routes(beanAPI web.Handlers) *httprouter.Router {
 	router := httprouter.New()
-	router.HandlerFunc(http.MethodPost, "/v1/bean", kitweb.Handle(recipeAPI.Create))
-	router.HandlerFunc(http.MethodGet, "/v1/bean/:id", kitweb.Handle(recipeAPI.GetBean))
+	router.HandlerFunc(http.MethodPost, "/v1/bean", kitweb.Handle(beanAPI.Create))
+	router.HandlerFunc(http.MethodGet, "/v1/bean/:id", kitweb.Handle(beanAPI.GetBean))
 	return router
 }

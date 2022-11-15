@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+var NameCannotBeEmptyError = errors.New("name cannot be empty")
+var OriginCannotBeEmptyError = errors.New("origin cannot be empty")
+var RoasterCannotBeEmptyError = errors.New("roaster cannot be empty")
+var PriceCannotBeLowerThan1Error = errors.New("price cannot be empty")
+
 type NewCoffeeBean struct {
 	Name      string    `json:"name"`
 	Roaster   string    `json:"roaster"`
@@ -32,16 +37,16 @@ func (c *NewCoffeeBean) toDomainModel() *domain.Bean {
 
 func (c *NewCoffeeBean) Validate() error {
 	if c.Name == "" {
-		return errors.New("name cannot be empty")
+		return NameCannotBeEmptyError
 	}
 	if c.Origin == "" {
-		return errors.New("origin cannot be empty")
+		return OriginCannotBeEmptyError
 	}
 	if c.Roaster == "" {
-		return errors.New("roaster cannot be empty")
+		return RoasterCannotBeEmptyError
 	}
 	if c.Price < 1 {
-		return errors.New("price cannot be empty")
+		return PriceCannotBeLowerThan1Error
 	}
 
 	return nil

@@ -22,6 +22,7 @@ The business rules package is basically divided into two, the first is the domai
 I aimed to keep the domain objects used in this package, the second package is the usecases package, in this package,
 I designed it to contain command, query services and port definitions where these services will receive the information
 they need.
+
 The infra package is basically divided into two parts; the first part is incoming adapters,
 in this package I defined the services that trigger the system (for example http services, grpc services or event
 handlers).
